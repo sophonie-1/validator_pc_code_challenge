@@ -1,0 +1,82 @@
+
+Hello everyone, my name is Bukira Sophonie, and today I’ll explain how my program — the **PC Build Validator** — works.
+
+ The goal of this project is to find the **best computer build** that fits within a given **budget**, uses **compatible components**, and has the **highest performance score**.
+
+
+
+I wrote this program in Python, and it starts with
+
+```python
+#!/usr/bin/env python3
+import sys
+```
+
+The first line tells the computer to use Python 3, and `sys` allows the program to read all input from the user or from a file.
+
+
+
+Next, I created a class called **`Component`**.
+Each component represents one computer part — for example, a CPU, motherboard, or GPU.
+Every component has:
+
+* an **ID**,
+* a **type**,
+* a **performance score**,
+* a **cost**,
+* and two specifications, such as socket type or wattage.
+
+This class helps organize all the component data clearly.
+
+
+
+Then, I created another class called `PCBuild`, which represents a full computer build made of five components:
+a CPU, Motherboard, GPU, RAM, and PSU.
+
+Inside this class, I wrote three main functions:
+
+* `total_cost()` adds up all the prices.
+* `total_performance()` adds up all the performance scores.
+* `is_compatible()` checks three important rules:
+
+  1. CPU socket must match the motherboard socket.
+  2. RAM type must match the motherboard’s RAM type.
+  3. PSU wattage must be strong enough for the CPU and GPU plus an extra 50 watts.
+
+If all these conditions are true, then the build is considered compatible.
+
+
+In the **`main()` function**, I first read the user input, which includes:
+
+* the total budget,
+* the list of all components available,
+* and the list of build kits to test.
+
+I store all components in a **dictionary**, so I can look them up quickly using their IDs.
+
+
+Then the program loops through every build kit.
+For each one, it checks:
+
+* Do all components exist?
+* Are they compatible?
+* Is the total cost under budget?
+
+If yes, it calculates the total performance score.
+The program keeps track of the best build with the highest score.
+
+
+Finally, it prints the result:
+
+Maximum Score: [score]
+Best Build: [kit_id]
+
+
+If none of the builds are valid, it simply outputs “NONE”.
+
+This project uses **object-oriented programming**, efficient **dictionary lookups**, and proper **error handling** to ensure stability.
+It also handles special cases, like missing components, invalid data, or over-budget builds.
+
+
+In summary, my program automatically selects the **most powerful and affordable PC build** from a list of possible configurations — just like real PC-building websites do.
+Thank you!
