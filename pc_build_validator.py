@@ -70,3 +70,165 @@ class PCBuild:
             return False
 
         return True
+
+# ---------- Input parsing helpers ----------
+def safe_int(x):
+    try:
+        return int(x)
+    except:
+        return None
+
+def main():
+    data = []
+    for line in sys.stdin:
+        line = line.strip()
+        if line == "":
+            continue
+        data.append(line)
+
+    # If there's no input, exit gracefully
+    if not data:
+        print("Maximum Score: 0")
+        print("Best Build: NONE")
+        return
+
+    idx = 0
+    # Read budget
+    try:
+        budget = int(data[idx].split()[0])
+    except Exception:
+        # invalid budget -> no valid builds
+        print("Maximum Score: 0")
+        print("Best Build: NONE")
+        return
+    idx += 1
+
+    # Number of components P
+    if idx >= len(data):
+        print("Maximum Score: 0")
+        print("Best Build: NONE")
+        return
+
+    try:
+        P = int(data[idx].split()[0])
+    except Exception:
+        print("Maximum Score: 0")
+        print("Best Build: NONE")
+        return
+    idx += 1
+
+    inventory = {}  # component_id -> Component
+
+    for _ in range(P):
+        if idx >= len(data):
+            break
+        # Each component line: component_id type performance_score cost spec_1 spec_2
+        parts = data[idx].split()
+        idx += 1
+        # Validate minimum fields (should be 6)
+        if len(parts) < 6:
+            continue
+        component_id = parts[0]
+        ctype = parts[1]
+        perf = safe_int(parts[2])
+        cost = safe_int(parts[3])
+        spec_1 = parts[4]
+        spec_2 = parts[5]
+
+        # If numeric fields are invalid, store but mark numbers as None -> will cause incompatibility or skip later
+        if perf is None or cost is None:
+            # skip invalid component lines (can't use them)
+            continue
+
+        comp = Component(component_id, ctype, perf, cost, spec_1, spec_2)
+        inventory[component_id] = comp
+
+    # Read number of kits K
+    if idx >= len(data):
+        K = 0
+    else:
+        try:
+            K = int(data[idx].split()[0])
+        except Exception:
+            K = 0
+        idx += 1
+
+    kits = []
+    for _ in range(K):
+        if idx >= len(data):
+            break
+        parts = data[idx].split()
+        idx += 1
+        # Format: kit_id cpu_id motherboard_id gpu_id ram_id psu_id
+        if len(parts) < 6:
+            continue
+        kit_id = parts[0]
+        cpu_id = parts[1]
+        mobo_id = parts[2]
+        gpu_id = parts[3]
+        ram_id = parts[4]
+        psu_id = parts[5]
+        kits.append((kit_id, cpu_id, mobo_id, gpu_id, ram_id, psu_id))
+
+    # Evaluate each kit
+    best_score = 0
+    best_kit = "NONE"
+
+    for kit in kits:
+        kit_id, cpu_id, mobo_id, gpu_id, ram_id, psu_id = kit
+
+        # Look up all components; if any missing -> invalid kit
+        ids = [cpu_id, mobo_id, gpu_id, ram_id, psu_id]
+        if not all(cid in inventory for cid in ids):
+            continue
+
+        # Build type mapping. Also check duplicates or wrong types.
+        comps = {
+            "CPU": inventory[cpu_id],
+            "Motherboard": inventory[mobo_id],
+            "GPU": inventory[gpu_id],
+            "RAM": inventory[ram_id],
+            "PSU": inventory[psu_id],
+        }
+
+        # Ensure each component is actually the expected type
+        ok_types = True
+        expected_map = {
+            "CPU": "CPU",
+            "Motherboard": "Motherboard",
+            "GPU": "GPU",
+            "RAM": "RAM",
+            "PSU": "PSU",
+        }
+        for t, comp in comps.items():
+            if comp.type != expected_map[t]:
+                ok_types = False
+                break
+        if not ok_types:
+            continue
+
+        build = PCBuild(kit_id, comps)
+
+        # cost check
+        total_cost = build.total_cost()
+        if total_cost > budget:
+            continue
+
+        # compatibility check
+        if not build.is_compatible():
+            continue
+
+        # compute score
+        score = build.total_performance()
+
+        # tie-breaker: first encountered (we only replace if strictly greater)
+        if score > best_score:
+            best_score = score
+            best_kit = kit_id
+
+    print(f"Maximum Score: {best_score}")
+    print(f"Best Build: {best_kit}")
+
+if __name__ == "__main__":
+    main()
+
