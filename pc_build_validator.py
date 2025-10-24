@@ -232,3 +232,22 @@ def main():
 if __name__ == "__main__":
     main()
 
+'''
+# Example Input:
+
+1500
+8
+cpu_1 CPU 500 300 LGA1700 95
+cpu_2 CPU 450 250 AM5 105
+mobo_1 Motherboard 150 180 LGA1700 DDR5
+mobo_2 Motherboard 140 160 AM5 DDR4
+gpu_1 GPU 700 400 - 300
+gpu_2 GPU 600 350 - 250
+ram_1 RAM 100 80 DDR5 -
+psu_1 PSU 50 100 750 -
+3
+kit_A cpu_1 mobo_1 gpu_1 ram_1 psu_1
+kit_B cpu_2 mobo_2 gpu_1 ram_1 psu_1
+kit_C cpu_1 mobo_1 gpu_2 ram_1 psu_1
+
+'''
