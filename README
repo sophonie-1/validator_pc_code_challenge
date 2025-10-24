@@ -1,0 +1,195 @@
+
+# 🖥️ PC Build Validator
+
+A Python program that validates and scores PC build configurations based on component compatibility, cost, and performance.
+This project simulates how a PC-building website ensures that each “featured build” is both **affordable**, **compatible**, and **high-performing** before promotion.
+
+---
+
+# 📘 Table of Contents
+
+* [Project Overview](#project-overview)
+* [Features](#features)
+* [How It Works](#how-it-works)
+* [Input Format](#input-format)
+* [Output Format](#output-format)
+* [Example](#example)
+* [How to Run](#how-to-run)
+* [Validation Rules](#validation-rules)
+* [Edge Cases Handled](#edge-cases-handled)
+* [Technologies Used](#technologies-used)
+* [Author](#author)
+
+---
+
+# 🚀 Project Overview
+
+The **PC Build Validator** helps verify and select the **best computer build** from multiple options.
+It ensures that each build:
+
+1. Uses compatible components (CPU, Motherboard, GPU, RAM, PSU).
+2. Stays within a fixed budget.
+3. Achieves the highest total performance score.
+
+If no build meets all conditions, the program outputs `NONE`.
+
+---
+
+# ✨ Features
+
+* ✅ **Checks component compatibility** (CPU socket, RAM type, PSU wattage).
+* 💰 **Compares total cost** against a fixed budget.
+* 🏆 **Selects the build** with the highest performance score.
+* 🚫 **Rejects invalid or incomplete builds** automatically.
+* ⚡ **Optimized** for fast dictionary lookups (O(1)) and efficient kit validation (O(K)).
+
+---
+
+# ⚙️ How It Works
+
+1. The program reads:
+
+   * Total budget
+   * A list of available components
+   * A list of build kits (each containing 5 components)
+
+2. For each build kit:
+
+   * Confirms all components exist.
+   * Validates compatibility rules.
+   * Checks that total cost ≤ budget.
+   * Calculates total performance.
+
+3. After processing all kits:
+
+   * Displays the build with the **highest valid score**.
+   * If none are valid → outputs a score of 0 and `Best Build: NONE`.
+
+---
+
+# 🧩 Input Format
+
+```
+B
+P
+[P lines of components]
+K
+[K lines of build kits]
+```
+
+**Component line format:**
+
+```
+component_id type performance_score cost spec_1 spec_2
+```
+
+**Build kit line format:**
+
+```
+kit_id cpu_id motherboard_id gpu_id ram_id psu_id
+```
+
+---
+
+# 🧾 Output Format
+
+```
+Maximum Score: [highest_score]
+Best Build: [kit_id]
+```
+
+If no valid build exists:
+
+```
+Maximum Score: 0
+Best Build: NONE
+```
+
+---
+
+# 💡 Example
+
+# Input:
+
+```
+1500
+8
+cpu_1 CPU 500 300 LGA1700 95
+cpu_2 CPU 450 250 AM5 105
+mobo_1 Motherboard 150 180 LGA1700 DDR5
+mobo_2 Motherboard 140 160 AM5 DDR4
+gpu_1 GPU 700 400 - 300
+gpu_2 GPU 600 350 - 250
+ram_1 RAM 100 80 DDR5 -
+psu_1 PSU 50 100 750 -
+3
+kit_A cpu_1 mobo_1 gpu_1 ram_1 psu_1
+kit_B cpu_2 mobo_2 gpu_1 ram_1 psu_1
+kit_C cpu_1 mobo_1 gpu_2 ram_1 psu_1
+```
+
+# Output:
+
+```
+Maximum Score: 1500
+Best Build: kit_A
+```
+
+---
+
+# 🏗️ Validation Rules
+
+A build is **compatible** if and only if:
+
+1. **CPU–Motherboard Socket Match:**
+   `cpu.socket == motherboard.socket`
+
+2. **RAM–Motherboard Type Match:**
+   `ram.type == motherboard.ram_type`
+
+3. **PSU Wattage Sufficient:**
+   `psu.wattage >= (cpu.TDP + gpu.TDP + 50)`
+
+Additional rules:
+
+* All IDs must exist in the component inventory.
+* Total cost must be ≤ budget.
+* All numeric values (TDP, wattage, cost) must be positive.
+
+---
+
+# ⚠️ Edge Cases Handled
+
+* Missing or invalid component references
+* Incompatible sockets or RAM types
+* Over-budget builds
+* Negative or non-numeric TDP / wattage / costs
+* Multiple builds with the same score (first in input wins)
+* No valid builds → returns `NONE`
+
+---
+
+# 🧑‍💻 How to Run
+
+Run the script and paste data directly:
+
+```bash
+python3 pc_build_validator.py
+```
+Then press:
+
+* **Ctrl + D** (Linux/Mac)
+* **Ctrl + Z + Enter** (Windows)
+---
+
+# 🧠 Technologies Used
+
+* **Python 3.x**
+* Object-Oriented Programming (OOP)
+* Basic algorithmic validation & data structures (dictionary lookups)
+
+---
+
+# 👤 Author
+
+**Bukira Sophonie**
